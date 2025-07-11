@@ -1,3 +1,4 @@
+import logging
 from sqlalchemy.orm import Session
 from .models import Employee
 from .filters import apply_filters
@@ -5,12 +6,15 @@ from .cache import generate_cache_key, get_cached_data, set_cached_data
 from .schemas import EmployeeSearchRequest
 import json
 
+logger = logging.getLogger(__name__)
+
 def search_employees_service(
     search_request: EmployeeSearchRequest,
     page: int,
     size: int,
     db: Session
 ):
+    logger.info(f"Employee search request: filters={search_request.dict(exclude_none=True)}, page={page}, size={size}")
     cache_key = generate_cache_key(
         search_request.dict(exclude_none=True),
         page,
@@ -18,14 +22,18 @@ def search_employees_service(
     )
     cached_data = get_cached_data(cache_key)
     if cached_data:
+        logger.info(f"Cache hit for key: {cache_key}")
         return json.loads(cached_data)
-
-    query = db.query(Employee)
-    filters = search_request.dict(exclude_none=True)
-    query = apply_filters(query, filters)
-
-    total_count = query.count()
-    results = query.offset((page - 1) * size).limit(size).all()
+    logger.info(f"Cache miss for key: {cache_key}")
+    try:
+        query = db.query(Employee)
+        filters = search_request.dict(exclude_none=True)
+        query = apply_filters(query, filters)
+        total_count = query.count()
+        results = query.offset((page - 1) * size).limit(size).all()
+    except Exception as e:
+        logger.error(f"Database error during employee search: {e}", exc_info=True)
+        raise
 
     employees_data = [
         {
@@ -37,6 +45,7 @@ def search_employees_service(
             "department": emp.department,
             "position": emp.position,
             "location": emp.location,
+            "organization": emp.organization,
             "status": emp.status
         }
         for emp in results

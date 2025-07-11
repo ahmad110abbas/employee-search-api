@@ -10,6 +10,7 @@ class EmployeeSearchRequest(BaseModel):
     department: Optional[str] = None
     position: Optional[str] = None
     location: Optional[str] = None
+    organization: Optional[str] = None
     status: Optional[EmployeeStatus] = None
 
     class Config:
@@ -24,6 +25,7 @@ class EmployeeResponse(BaseModel):
     department: str
     position: str
     location: str
+    organization: str
     status: EmployeeStatus
 
 class PaginatedResponse(BaseModel):

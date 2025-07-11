@@ -19,4 +19,5 @@ class Employee(Base):
     department = Column(String(50), index=True)
     position = Column(String(50), index=True)
     location = Column(String(50), index=True)
+    organization = Column(String(100), index=True, nullable=True)
     status = Column(SqlEnum(EmployeeStatus), default=EmployeeStatus.active, nullable=False)
