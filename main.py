@@ -1,16 +1,47 @@
 import logging
 from fastapi import FastAPI, Request
+from fastapi.openapi.utils import get_openapi
 from .app.database import engine, Base
 from .app.models import Employee
 from .app.routes import router
 from .app.middlewares import rate_limit_middleware
 import uvicorn
 
-# Set up basic logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(name)s %(message)s')
 logger = logging.getLogger(__name__)
 
-app = FastAPI()
+app = FastAPI(
+    title="Employee Search API",
+    description="""
+    A comprehensive API for searching and filtering employee data across organizations.
+    
+    ## Features
+    * **Search by multiple criteria**: Filter employees by name, department, position, location, organization, and status
+    * **Pagination support**: Efficiently handle large datasets with page-based pagination
+    * **Caching**: Fast response times with intelligent caching
+    * **Status filtering**: Filter by employee status (active, not_started, terminated)
+    
+    ## Rate Limiting
+    API requests are rate-limited to ensure fair usage.
+    """,
+    version="1.0.0",
+    contact={
+        "name": "API Support",
+        "email": "support@example.com",
+    },
+    license_info={
+        "name": "MIT",
+        "url": "https://opensource.org/licenses/MIT",
+    },
+    openapi_tags=[
+        {
+            "name": "employees",
+            "description": "Operations with employees. Search and filter employee data.",
+        },
+    ],
+    docs_url="/docs",
+    redoc_url="/redoc",
+)
 
 # Request logging middleware
 @app.middleware("http")
@@ -24,7 +55,7 @@ async def log_requests(request: Request, call_next):
 app.middleware("http")(rate_limit_middleware)
 
 # Include routes
-app.include_router(router)
+app.include_router(router, prefix="/api/v1", tags=["employees"])
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
