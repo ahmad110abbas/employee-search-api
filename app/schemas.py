@@ -1,9 +1,19 @@
+from typing import Optional
 from pydantic import BaseModel, Extra
+from .models import EmployeeStatus
 
 class EmployeeSearchRequest(BaseModel):
-    filters: dict = {}
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    full_name: Optional[str] = None
+    contact_info: Optional[str] = None
+    department: Optional[str] = None
+    position: Optional[str] = None
+    location: Optional[str] = None
+    status: Optional[EmployeeStatus] = None
+
     class Config:
-        extra = Extra.allow  # Allows additional dynamic fields
+        extra = Extra.forbid  # Forbid additional fields
 
 class EmployeeResponse(BaseModel):
     id: int
@@ -14,7 +24,7 @@ class EmployeeResponse(BaseModel):
     department: str
     position: str
     location: str
-    status: str
+    status: EmployeeStatus
 
 class PaginatedResponse(BaseModel):
     results: list[EmployeeResponse]
