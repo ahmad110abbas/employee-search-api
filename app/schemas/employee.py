@@ -1,6 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel, Extra
-from .models import EmployeeStatus
+from app.db.models import EmployeeStatus
 
 class EmployeeSearchRequest(BaseModel):
     first_name: Optional[str] = None
@@ -30,4 +30,4 @@ class EmployeeResponse(BaseModel):
 
 class PaginatedResponse(BaseModel):
     results: list[EmployeeResponse]
-    pagination: dict
+    pagination: dict 

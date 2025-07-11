@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, Query, Body
 from sqlalchemy.orm import Session
-from .database import get_db
-from .schemas import EmployeeSearchRequest, PaginatedResponse
-from .services import search_employees_service
+from app.db.session import get_db
+from app.schemas.employee import EmployeeSearchRequest, PaginatedResponse
+from app.services.employee_service import search_employees_service
 
 router = APIRouter()
 
@@ -73,4 +73,4 @@ async def search_employees(
         page=page,
         size=size,
         db=db
-    )
+    ) 

@@ -1,8 +1,9 @@
 import pytest
 from fastapi.testclient import TestClient
-from main import app
-from app.database import Base, engine, SessionLocal
-from app.models import Employee
+from app.main import app
+from app.db.base import Base, engine
+from app.db.session import SessionLocal
+from app.db.models import Employee
 
 @pytest.fixture(scope="function")
 def test_db():
@@ -23,5 +24,6 @@ def sample_employee():
         "department": "Testing",
         "position": "QA",
         "location": "Test City",
+        "organization": "Test Org",
         "status": "active"
     }

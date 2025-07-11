@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Enum as SqlEnum
 from enum import Enum
-from .database import Base
-from .config import get_config
+from app.db.base import Base
+from app.core.config import get_config
 
 config = get_config()
 
@@ -20,4 +20,4 @@ class Employee(Base):
     position = Column(String(50), index=True)
     location = Column(String(50), index=True)
     organization = Column(String(100), index=True, nullable=True)
-    status = Column(SqlEnum(EmployeeStatus), default=EmployeeStatus.active, nullable=False)
+    status = Column(SqlEnum(EmployeeStatus), default=EmployeeStatus.active, nullable=False) 
